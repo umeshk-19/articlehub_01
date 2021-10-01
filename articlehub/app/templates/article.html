@@ -1,0 +1,13 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="article-data">
+  <div class="article-title">
+    {{article.title}}
+  </div>
+  <p class="author-name">{{article.author}}</p>
+  <p class="author-date">{{article.createdAt|datetime}}</p>
+  <a class="author-follow" href="{{url_for('edit_article_details',slug=article.slug)}}">Edit Article</a>
+  <img src="{{article.image}}" alt="" class="article-image" />
+  <p class="article-description">{{article.description}}</p>
+  <p class="article-body">{{article.body | safe}}</p>
+</div>
+{%endblock%}

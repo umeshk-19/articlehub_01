@@ -1,0 +1,9 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="error-content"">
+  <h1 class="error-head">Error 404, Page Not Found</h1>
+  <p class="error-text">What you were looking for is just not there.</p>
+  <p class="error-link">
+    <a class="pagination-buttons" href="{{ url_for('index') }}">Return to homepage</a>
+  </p>
+</div>
+{% endblock %}

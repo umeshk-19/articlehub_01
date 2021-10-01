@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quill.css') }}" />
+    <link rel="shortcut icon" href="{{url_for('static', filename='images/logo.jpg')}}" />
+    <title>Article Hub</title>
+  </head>
+  <body>
+    <div class="topnav" id="myTopnav">
+      <a href="{{url_for('index')}}" class="logo">Article Hub</a>
+      <div class="links-block">
+        <a href="{{url_for('add_article')}}" class="links">Write</a>
+        <a href="javascript:void(0);" class="icon" onclick="hideNavBar()">&#9776;</a>
+      </div>
+    </div>
+    <div class="main-container">
+      {% block content %} {% endblock %}
+    </div>
+    <div class="footer">
+      <div class="footer-items">
+        <div class="row-1">
+          <a href="#" class="footer-logo">Article Hub</a>
+        </div>
+        <div class="row-2">
+          <a href="#">Get started</a>
+          <a href="#">Subscribe</a>
+          <a href="#"><spam class="inactive">Have an account?</spam>&nbsp;Sign in</a>
+        </div>
+        <div class="row-3">
+          <a href="#">About Article Hub</a>
+          <a href="#">Write</a>
+          <a href="#">Gift</a>
+          <a href="#">Help</a>
+          <a href="#">Press Contacts</a>
+          <a href="#">Careers</a>
+          <a href="#">Legal</a>
+        </div>
+        <div class="row-4">
+          <a href="#"><spam class="inactive">&copy;&nbsp;2020 A Article Hub Corporation</spam></a>
+        </div>
+      </div>
+    </div>
+    <script>
+      function hideNavBar() {
+        var x = document.getElementById("myTopnav")
+        if (x.className === "topnav") {
+          x.className += " responsive"
+        } else {
+          x.className = "topnav"
+        }
+      }
+      function signout() {
+        fetch("/users/logout", {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((result) => (window.location.href = "{{url_for('index')}}"))
+      }
+    </script>
+  </body>
+</html>

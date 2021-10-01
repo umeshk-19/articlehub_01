@@ -1,0 +1,27 @@
+{% extends 'layout.html' %} {% block content %} {%if error%}
+<p class="comment-form feed-error">{{error}}</p>
+{%endif%}
+<div class="feed-text">
+  <p class="feed-header">Dive deeper on topics that matter to you.</p>
+</div>
+{% if articles.articlesCount == 0 %}
+<p class="no-feed">No articles to display . . .</p>
+{%else%} {% for article in articles.articles %}
+<div class="feed-articles">
+  <div class="feed-data">
+    <div class="feed-up">
+      <a class="feed-title" href="{{url_for('get_articledata',slug=article.slug)}}">{{article.title}}</a>
+      <p class="feed-description">
+        {{article.description}}
+      </p>
+      <div class="feed-down">
+        <div>
+          <p class="feed-author">{{article.author}}</p>
+          <p class="feed-date">{{article.createdAt | datetime}}</p>
+        </div>
+      </div>
+    </div>
+    <img src="{{article.image}}" alt="article-image" class="feed-image" />
+  </div>
+</div>
+{% endfor %}{%endif%} {% endblock %}

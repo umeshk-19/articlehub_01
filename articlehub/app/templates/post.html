@@ -1,0 +1,129 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container">
+  <form id="articleForm">
+    {% if error != None %}
+    <div class="row"><p class="error-form">All the fields are mandatory</p></div>
+    {% endif %} {%if slug%}
+    <div class="label"><p class="signup-header">Edit an Article</p></div>
+    <div class="row">
+      <input type="text" name="title" placeholder="Title" value="{{title}}" />
+    </div>
+    <div class="row">
+      <input type="text" name="image" placeholder="Image URL" value="{{image}}" />
+    </div>
+    <div class="row">
+      <textarea class="description" name="description" placeholder="Description" rows="4">{{description}}</textarea>
+    </div>
+    <div class="row">
+      <div id="editor" rows="3"></div>
+    </div>
+    <div class="row">
+      <input type="text" name="author" placeholder="Author" value="{{author}}" />
+    </div>
+    <div class="article-update-block">
+      <div class="article-update">
+        <input type="submit" value="Update" class="article-update-button" />
+      </div>
+      <div class="article-delete">
+        <a onclick="deleteArticle()" class="article-delete-button">Delete</a>
+      </div>
+    </div>
+    {%else%}
+    <div class="label"><p class="signup-header">Create an Article</p></div>
+    <div class="row">
+      <input type="text" name="title" placeholder="Title" required />
+    </div>
+    <div class="row">
+      <input type="text" name="image" placeholder="Image URL" />
+    </div>
+    <div class="row">
+      <textarea class="description" name="description" placeholder="Description" rows="4" required></textarea>
+    </div>
+    <div class="row">
+      <div id="editor" rows="3"></div>
+    </div>
+    <div class="row">
+      <input type="text" name="auhtor" placeholder="Author" />
+    </div>
+    <div class="row">
+      <input type="submit" value="Create" />
+    </div>
+    {%endif%}
+  </form>
+</div>
+<script src="{{url_for('static', filename='js/quill.js')}}"></script>
+<script>
+  var toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    // [{ header: 1 }, { header: 2 }], // custom button values
+    // [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    // [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    // [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+    // [{ align: [] }],
+    // ["clean"], // remove formatting button
+  ]
+  var quill = new Quill("#editor", {
+    modules: {
+      toolbar: toolbarOptions,
+    },
+    placeholder: "Article Body",
+    theme: "snow",
+  })
+  if ("{{body}}") quill.root.innerHTML = "{{body|safe}}"
+
+  articleForm.onsubmit = async (e) => {
+    e.preventDefault()
+    formData = new FormData(articleForm)
+    var object = {}
+    formData.forEach((value, key) => {
+      if (value != "") object[key] = value
+    })
+    var articleData = {}
+    articleData["article"] = object
+    articleData["article"]["body"] = quill.container.firstChild.innerHTML
+    if ("{{slug}}") {
+      let response = await fetch("/api/articles/{{slug}}", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify(articleData),
+      })
+      let result = await response.json()
+      if (result) {
+        window.location.href = "{{url_for('get_articledata',slug='slug') }}".replace("slug", result.article.slug)
+      }
+    } else {
+      if (articleData["article"]["body"] != "<p><br></p>") {
+        let response = await fetch("/api/articles", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(articleData),
+        })
+        let result = await response.json()
+        if (result) {
+          window.location.href = "{{url_for('get_articledata',slug='slug') }}".replace("slug", result.article.slug)
+          // window.location.href = "{{url_for('index')}}"
+        }
+      } else {
+        window.location.href = "{{url_for('add_article',error=True)}}"
+      }
+    }
+  }
+
+  function deleteArticle() {
+    fetch("/api/articles/{{slug}}", {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((result) => (window.location.href = "{{url_for('index')}}"))
+  }
+</script>
+{%endblock%}
