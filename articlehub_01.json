@@ -1,0 +1,743 @@
+{
+	"info": {
+		"_postman_id": "617d026a-f57d-49b3-81c0-3e82e7acd9e5",
+		"name": "Milestone 1",
+		"description": "1. Post the Article\n2. Get the Article\n3. Get all the Articles\n4. Update the Article\n5. Delete the Article",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Article",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8d3539c8-f0ce-42a2-ac90-54fdd5320e78",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4a62ee9c-78f0-4f3e-94a9-b173a6006cb9",
+						"exec": [
+							"pm.test(\"1.1 Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"1.2 Check for Article key\", function () {",
+							"    pm.expect(jsonData).to.have.property('article');",
+							"});",
+							"",
+							"var regex = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/;",
+							"",
+							"var articleData = jsonData.article;",
+							"",
+							"pm.test(\"1.3 Check for Slug key\", function () {",
+							"    pm.expect(articleData).to.have.property('slug');",
+							"    pm.collectionVariables.set('slug', articleData.slug);",
+							"    pm.collectionVariables.set('test-slug', articleData.slug);",
+							"    pm.collectionVariables.set('tempslug', articleData.slug - 0);",
+							"});",
+							"",
+							"pm.test(\"1.4 Check for Title key\", function () {",
+							"    pm.expect(articleData).to.have.property('title');",
+							"    pm.collectionVariables.set('test-title', articleData.title);",
+							"});",
+							"",
+							"pm.test(\"1.5 Check for Description key\", function () {",
+							"    pm.expect(articleData).to.have.property('description');",
+							"    pm.collectionVariables.set('test-description', articleData.description);",
+							"});",
+							"",
+							"pm.test(\"1.6 Check for Body key\", function () {",
+							"    pm.expect(articleData).to.have.property('body');",
+							"    pm.collectionVariables.set('test-body', articleData.body);",
+							"});",
+							"",
+							"pm.test(\"1.7 Check for Image key\", function () {",
+							"    pm.expect(articleData).to.have.property('image');",
+							"    pm.collectionVariables.set('test-image', articleData.image);",
+							"});",
+							"",
+							"pm.test(\"1.8 Check for Author key\", function () {",
+							"    pm.expect(articleData).to.have.property('author');",
+							"    pm.collectionVariables.set('test-author', articleData.author);",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('createdAt');",
+							"    pm.collectionVariables.set('test-createdAt', articleData.createdAt);",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.createdAt).to.match(regex);",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('updatedAt');",
+							"    pm.collectionVariables.set('test-updatedAt', articleData.updatedAt);",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.updatedAt).to.match(regex);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"article\": {\n    \"title\": \"How to train your dragon\",\n    \"description\": \"Ever wonder how?\",\n    \"body\": \"You have to believe\",\n    \"author\": \"Jakob\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{APIURL}}/articles",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Checking the Article for Unique Slug",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6a1b823a-0448-418b-bed7-544502921fd9",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Check for unique slug value\", function () {",
+							"    pm.expect(jsonData.article.slug).to.not.eql(pm.collectionVariables.get('slug'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"article\": {\n    \"title\": \"How to train your dragon\",\n    \"description\": \"Ever wonder how?\",\n    \"body\": \"You have to believe\",\n    \"author\": \"Jakob\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{APIURL}}/articles",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get the Article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e4d83466-aeb2-4d12-99be-5808ae61e0c4",
+						"exec": [
+							"pm.test(\"2.1 Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"2.2 Check for Article key\", function () {",
+							"    pm.expect(jsonData).to.have.property('article');",
+							"});",
+							"",
+							"var regex = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/;",
+							"",
+							"var articleData = jsonData.article;",
+							"",
+							"pm.test(\"2.3 Check for Slug key\", function () {",
+							"    pm.expect(articleData).to.have.property('slug');",
+							"});",
+							"",
+							"pm.test(\"2.4 Check for Slug value\", function () {",
+							"    pm.expect(articleData.slug).to.eql(pm.collectionVariables.get('slug'));",
+							"});",
+							"",
+							"pm.test(\"2.5 Check for Title key\", function () {",
+							"    pm.expect(articleData).to.have.property('title');",
+							"});",
+							"",
+							"pm.test(\"Check for Description key\", function () {",
+							"    pm.expect(articleData).to.have.property('description');",
+							"});",
+							"",
+							"pm.test(\"Check for Body key\", function () {",
+							"    pm.expect(articleData).to.have.property('body');",
+							"});",
+							"",
+							"pm.test(\"Check for Image key\", function () {",
+							"    pm.expect(articleData).to.have.property('image');",
+							"});",
+							"",
+							"pm.test(\"Check for Author key\", function () {",
+							"    pm.expect(articleData).to.have.property('author');",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('createdAt');",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.createdAt).to.match(regex);",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('updatedAt');",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.updatedAt).to.match(regex);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{APIURL}}/articles/{{slug}}",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles",
+						"{{slug}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Getting the Article with 404 Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5b0259a7-a687-4806-badd-2c5233821a2e",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{APIURL}}/articles/{{tempslug}}",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles",
+						"{{tempslug}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Articles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6110afe0-9b94-4585-ba0f-e0849929a852",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Check for Articles key\", function () {",
+							"    pm.expect(jsonData).to.have.property('articles');",
+							"});",
+							"",
+							"pm.test(\"Check for Articles is an Array object\", function () {",
+							"    pm.expect(jsonData.articles).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"Check for Articles Count key\", function () {",
+							"    pm.expect(jsonData).to.have.property('articlesCount');",
+							"});",
+							"",
+							"pm.test(\"Check for Articles Count value to be a Integer\", function () {",
+							"    pm.expect(jsonData.articlesCount).to.be.a('number');",
+							"});",
+							"",
+							"pm.test('Check whether Articles are in sorted order', function () {",
+							"    var _ = require('lodash');",
+							"    pm.expect(jsonData.articles).to.eql(_.orderBy(jsonData.articles, ['updatedAt'], ['desc']));",
+							"});",
+							"",
+							"if (jsonData.articles.length) {",
+							"",
+							"    var regex = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/;",
+							"",
+							"    var articleData = jsonData.articles[0];",
+							"",
+							"    pm.test(\"Check for Slug key\", function () {",
+							"        pm.expect(articleData).to.have.property('slug');",
+							"    });",
+							"",
+							"    pm.test(\"Check for Title key\", function () {",
+							"        pm.expect(articleData).to.have.property('title');",
+							"    });",
+							"",
+							"    pm.test(\"Check for Description key\", function () {",
+							"        pm.expect(articleData).to.have.property('description');",
+							"    });",
+							"",
+							"    pm.test(\"Check for Body key\", function () {",
+							"        pm.expect(articleData).to.have.property('body');",
+							"    });",
+							"",
+							"    pm.test(\"Check for Image key\", function () {",
+							"        pm.expect(articleData).to.have.property('image');",
+							"    });",
+							"",
+							"    pm.test(\"Check for Author key\", function () {",
+							"        pm.expect(articleData).to.have.property('author');",
+							"    });",
+							"",
+							"    pm.test(\"Check for CreatedAt key\", function () {",
+							"        pm.expect(articleData).to.have.property('createdAt');",
+							"    });",
+							"",
+							"    pm.test(\"Check for CreatedAt value is an ISO 8601 timestamp\", function () {",
+							"        pm.expect(articleData.createdAt).to.match(regex);",
+							"    });",
+							"",
+							"    pm.test(\"Check for UpdatedAt key\", function () {",
+							"        pm.expect(articleData).to.have.property('updatedAt');",
+							"    });",
+							"",
+							"    pm.test(\"Check for UpdatedAt value is an ISO 8601 timestamp\", function () {",
+							"        pm.expect(articleData.updatedAt).to.match(regex);",
+							"    });",
+							"}",
+							"else {",
+							"    pm.test(\"Check for Articles Count value to be equal to 0 if feed is empty\", function () {",
+							"        pm.expect(jsonData.articlesCount).to.eql(0);",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{APIURL}}/articles",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Article",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "6b49d531-86ce-422e-a50f-103d56fd4872",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bce9a7e9-8ab5-4539-81c1-8ae392374cff",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Check for Article key\", function () {",
+							"    pm.expect(jsonData).to.have.property('article');",
+							"});",
+							"",
+							"var regex = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/;",
+							"",
+							"var articleData = jsonData.article;",
+							"",
+							"pm.test(\"Check for Slug key\", function () {",
+							"    pm.expect(articleData).to.have.property('slug');",
+							"});",
+							"",
+							"pm.test(\"Check for Slug value\", function () {",
+							"    pm.expect(articleData.slug).to.not.eql(pm.collectionVariables.get('test-slug'));",
+							"    pm.collectionVariables.set('slug', articleData.slug);",
+							"});",
+							"",
+							"pm.test(\"Check for Title key\", function () {",
+							"    pm.expect(articleData).to.have.property('title');",
+							"});",
+							"",
+							"pm.test(\"Check for Title value\", function () {",
+							"    pm.expect(articleData.title).to.not.eql(pm.collectionVariables.get('test-title'));",
+							"});",
+							"",
+							"pm.test(\"Check for Description key\", function () {",
+							"    pm.expect(articleData).to.have.property('description');",
+							"});",
+							"",
+							"pm.test(\"Check for Description value\", function () {",
+							"    pm.expect(articleData.description).to.not.eql(pm.collectionVariables.get('test-description'));",
+							"});",
+							"",
+							"pm.test(\"Check for Body key\", function () {",
+							"    pm.expect(articleData).to.have.property('body');",
+							"});",
+							"",
+							"pm.test(\"Check for Body value\", function () {",
+							"    pm.expect(articleData.body).to.not.eql(pm.collectionVariables.get('test-body'));",
+							"});",
+							"",
+							"pm.test(\"Check for Image key\", function () {",
+							"    pm.expect(articleData).to.have.property('image');",
+							"});",
+							"",
+							"pm.test(\"Check for Image value\", function () {",
+							"    pm.expect(articleData.image).to.not.eql(pm.collectionVariables.get('test-image'));",
+							"});",
+							"",
+							"pm.test(\"Check for Author key\", function () {",
+							"    pm.expect(articleData).to.have.property('author');",
+							"});",
+							"",
+							"pm.test(\"Check for Author value\", function () {",
+							"    pm.expect(articleData.author).to.not.eql(pm.collectionVariables.get('test-author'));",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('createdAt');",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt value\", function () {",
+							"    pm.expect(articleData.createdAt).to.eql(pm.collectionVariables.get('test-createdAt'));",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.createdAt).to.match(regex);",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('updatedAt');",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt value\", function () {",
+							"    pm.expect(articleData.updatedAt).to.not.eql(pm.collectionVariables.get('test-updatedAt'));",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.updatedAt).to.match(regex);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"article\": {\n        \"title\": \"How to train a dragon\",\n        \"description\": \"Ever wonder why?\",\n        \"body\": \"You have to believe me\",\n        \"image\": \"https://image.flaticon.com/icons/svg/2878/2878701.svg\",\n        \"author\": \"Jane\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{APIURL}}/articles/{{slug}}",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles",
+						"{{slug}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Updating the Article with 404 Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47b862f6-f97e-44fb-ba56-e045d01b0bc7",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{APIURL}}/articles/{{tempslug}}",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles",
+						"{{tempslug}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec92717e-3ac7-4f8d-8dcd-65e6008b48ff",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Check for Article key\", function () {",
+							"    pm.expect(jsonData).to.have.property('article');",
+							"});",
+							"",
+							"var regex = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/;",
+							"",
+							"var articleData = jsonData.article;",
+							"",
+							"pm.test(\"Check for Slug key\", function () {",
+							"    pm.expect(articleData).to.have.property('slug');",
+							"});",
+							"",
+							"pm.test(\"Check for Slug value\", function () {",
+							"    pm.expect(articleData.slug).to.eql(pm.collectionVariables.get('slug'));",
+							"});",
+							"",
+							"pm.test(\"Check for Title key\", function () {",
+							"    pm.expect(articleData).to.have.property('title');",
+							"});",
+							"",
+							"pm.test(\"Check for Description key\", function () {",
+							"    pm.expect(articleData).to.have.property('description');",
+							"});",
+							"",
+							"pm.test(\"Check for Body key\", function () {",
+							"    pm.expect(articleData).to.have.property('body');",
+							"});",
+							"",
+							"pm.test(\"Check for Image key\", function () {",
+							"    pm.expect(articleData).to.have.property('image');",
+							"});",
+							"",
+							"pm.test(\"Check for Author key\", function () {",
+							"    pm.expect(articleData).to.have.property('author');",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('createdAt');",
+							"});",
+							"",
+							"pm.test(\"Check for CreatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.createdAt).to.match(regex);",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt key\", function () {",
+							"    pm.expect(articleData).to.have.property('updatedAt');",
+							"});",
+							"",
+							"pm.test(\"Check for UpdatedAt value is an ISO 8601 timestamp\", function () {",
+							"    pm.expect(articleData.updatedAt).to.match(regex);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{APIURL}}/articles/{{slug}}",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles",
+						"{{slug}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deleting the Article with 404 Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "42bebf26-a3d1-4dab-bdb0-9c9cfd1e15d1",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"function cleanup() {",
+							"    const clean = _.keys(pm.collectionVariables.toObject())",
+							"    _.each(clean, (arrItem) => {",
+							"        pm.collectionVariables.unset(arrItem)",
+							"    })",
+							"}",
+							"cleanup()"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{APIURL}}/articles/{{tempslug}}",
+					"host": [
+						"{{APIURL}}"
+					],
+					"path": [
+						"articles",
+						"{{tempslug}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "fc5a29c8-5edb-45cd-9f38-3573cefbf7a3",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "96658a9e-7064-4d0b-bf81-d024050ade3b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
